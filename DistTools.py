@@ -37,14 +37,39 @@ def bake():
                 #    break
                 
 def export():
+    models = {}
     for distModel in bpy.data.objects:
         if distModel.name[-5:] == "_dist":
-            bpy.ops.object.select_all(action='DESELECT')
-            distModel.select_set(True)
-            bpy.context.view_layer.objects.active = distModel
-            path = "D:\\Desktop\\export\\" + distModel.name + ".nif"
-            bpy.ops.export_scene.mw(filepath=path, use_selection=True)
+            keyName = distModel.name[:-5]
+
+            if keyName[-7:-2] == "_part":
+                keyName = keyName[:-7]
+                
+            if keyName in models:
+                models[keyName] = models[keyName] + [distModel.name]
+            else:
+                models[keyName] = [distModel.name]
+            print(keyName)
+            
+    for key in models.keys():
+        bpy.ops.object.select_all(action='DESELECT')
         
+        for model in models[key]:
+                bpy.data.objects[model].select_set(True)
+                
+        bpy.context.view_layer.objects.active = bpy.data.objects[models[key][0]]
+        
+        if len(models[key]) > 1:
+            bpy.ops.object.duplicate()
+            bpy.ops.object.join()
+            bpy.context.view_layer.objects.active.name = key + "_dist"
+
+        path = "D:\\Desktop\\export\\" + key + "_dist.nif"
+        bpy.ops.export_scene.mw(filepath=path, use_selection=True)
+        
+        if len(models[key]) > 1:
+            bpy.ops.object.delete()
+            
 class BakeDist(bpy.types.Operator):
     bl_idname = "object.bake_dist"        # Unique identifier for buttons and menu items to reference.
     bl_label = "Bake Dist Meshes"         # Display name in the interface.
