@@ -6,7 +6,7 @@ bl_info = {
 
 
 import bpy
-
+import mathutils
 
 def bake():
     count = 0
@@ -39,7 +39,7 @@ def bake():
 def export():
     models = {}
     for distModel in bpy.data.objects:
-        if distModel.name[-5:] == "_dist":
+        if distModel.name[-5:] == "_dist" or distModel.name[-5:] == "_clon":
             keyName = distModel.name[:-5]
 
             if keyName[-7:-2] == "_part":
@@ -64,11 +64,17 @@ def export():
             bpy.ops.object.join()
             bpy.context.view_layer.objects.active.name = key + "_dist"
 
-        path = "D:\\Desktop\\export\\" + key + "_dist.nif"
+        distLocation = bpy.context.view_layer.objects.active.location.copy()
+        bpy.context.view_layer.objects.active.location = mathutils.Vector((0.0, 0.0, 0.0))
+
+        path = "E:\\export\\" + key + "_dist.nif"
         bpy.ops.export_scene.mw(filepath=path, use_selection=True)
         
         if len(models[key]) > 1:
             bpy.ops.object.delete()
+        else:
+            bpy.context.view_layer.objects.active.location = distLocation
+
             
 class BakeDist(bpy.types.Operator):
     bl_idname = "object.bake_dist"        # Unique identifier for buttons and menu items to reference.
