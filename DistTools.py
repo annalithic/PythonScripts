@@ -11,9 +11,10 @@ import mathutils
 def bake():
     count = 0
     clear = True
-    for distModel in bpy.data.objects:
+    for distModel in bpy.context.view_layer.objects:
+        print(distModel.name)
         if distModel.name[-5:] == "_dist":
-            highModel = bpy.data.objects[distModel.name[:-5]]
+            highModel = bpy.context.view_layer.objects[distModel.name[:-5]]
             if(highModel):
                 bpy.ops.object.select_all(action='DESELECT')
                 highModel.select_set(True)
@@ -31,6 +32,7 @@ def bake():
                     use_clear = clear,
                 )
                 distModel.location = distLocation
+                print("K")
                 count = count + 1
                 clear = False
                 #if count == 4:
@@ -38,7 +40,7 @@ def bake():
                 
 def export():
     models = {}
-    for distModel in bpy.data.objects:
+    for distModel in bpy.context.view_layer.objects:
         if distModel.name[-5:] == "_dist" or distModel.name[-5:] == "_clon":
             keyName = distModel.name[:-5]
 
@@ -55,9 +57,9 @@ def export():
         bpy.ops.object.select_all(action='DESELECT')
         
         for model in models[key]:
-                bpy.data.objects[model].select_set(True)
+                bpy.context.view_layer.objects[model].select_set(True)
                 
-        bpy.context.view_layer.objects.active = bpy.data.objects[models[key][0]]
+        bpy.context.view_layer.objects.active = bpy.context.view_layer.objects[models[key][0]]
         
         if len(models[key]) > 1:
             bpy.ops.object.duplicate()
