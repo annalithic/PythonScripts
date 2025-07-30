@@ -111,7 +111,17 @@ def PrintNifStats(folder):
 #mesh = "E:/Extracted/Morrowind/meshes/f/aaafricked.nif"
 #mesh = "F:/Anna/Desktop/bad.nif"
 
-PrintNifStats("E:/Extracted/Morrowind/combinedmeshesforconvenience")
+#PrintNifStats("E:/Extracted/Morrowind/combinedmeshesforconvenience")
+PrintNifStats("E:/Extracted/Morrowind/vanilla/meshes")
+PrintNifStats("C:/Games/MorrowindMods/TamrielDataMain/00 Data Files/meshes")
+PrintNifStats("C:/Games/MorrowindMods/LOD/mw_build/meshes")
+PrintNifStats("C:/Games/MorrowindMods/LOD/mw_rock/meshes")
+PrintNifStats("C:/Games/MorrowindMods/LOD/mw_tree/meshes")
+PrintNifStats("C:/Games/MorrowindMods/LOD/tr_build/meshes")
+PrintNifStats("C:/Games/MorrowindMods/LOD/tr_rock/meshes")
+PrintNifStats("C:/Games/MorrowindMods/LOD/tr_rocknew/meshes")
+PrintNifStats("C:/Games/MorrowindMods/LOD/tr_tree/meshes")
+
 
 #triCount = 0
 #shapeCount = 0

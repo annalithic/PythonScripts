@@ -14,7 +14,11 @@ def bake():
     for distModel in bpy.context.view_layer.objects:
         print(distModel.name)
         if distModel.name[-5:] == "_dist":
-            highModel = bpy.context.view_layer.objects[distModel.name[:-5]]
+            highModelName = distModel.name[:-5]
+            highModel = bpy.context.view_layer.objects.get(highModelName)
+            if(highModel is None and highModelName[-7:-2] == "_part"):
+                highModelName = highModelName[:-7]
+                highModel = bpy.context.view_layer.objects.get(highModelName)
             if(highModel):
                 bpy.ops.object.select_all(action='DESELECT')
                 highModel.select_set(True)
@@ -61,8 +65,24 @@ def export():
                 
         bpy.context.view_layer.objects.active = bpy.context.view_layer.objects[models[key][0]]
         
-        if len(models[key]) > 1:
-            bpy.ops.object.duplicate()
+        duplicateModels = len(models[key]) > 1 or bpy.context.view_layer.objects.active.name[-5:] == "_clon"
+        
+        if duplicateModels:
+            newModels = []
+            for dupeModel in bpy.context.selected_objects:
+                newModel = dupeModel.copy()
+                newModel.data = dupeModel.data.copy()
+                bpy.context.collection.objects.link(newModel)
+                if (newModel.scale.x < 0) is not (newModel.scale.y < 0):
+                    newModel.data.flip_normals()
+                newModels += [newModel.name]
+              
+            bpy.ops.object.select_all(action='DESELECT')
+            for model in newModels:
+                bpy.context.view_layer.objects[model].select_set(True)
+            bpy.context.view_layer.objects.active = bpy.context.view_layer.objects[newModels[0]]
+
+            bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
             bpy.ops.object.join()
             bpy.context.view_layer.objects.active.name = key + "_dist"
 
@@ -72,7 +92,7 @@ def export():
         path = "E:\\export\\" + key + "_dist.nif"
         bpy.ops.export_scene.mw(filepath=path, use_selection=True)
         
-        if len(models[key]) > 1:
+        if duplicateModels:
             bpy.ops.object.delete()
         else:
             bpy.context.view_layer.objects.active.location = distLocation
